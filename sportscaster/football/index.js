@@ -21,7 +21,7 @@ router.get('/live-matches', async (req, res)=>{
       process.env.API_URL +
     'crawl.json?spider_name=football-live-info&start_requests=true',
   );
-  res.send(response.items);
+  res.json(response.items);
 });
 
 router.get('/match-info/:match_code', async (req, res) => {
@@ -31,7 +31,7 @@ router.get('/match-info/:match_code', async (req, res) => {
       'url=https://www.transfermarkt.co.uk/spielbericht/index/spielbericht/' +
     req.params.match_code,
   );
-  res.send(response.items[0].match_info);
+  res.json(response.items[0].match_info);
 });
 
 router.get('/player/:playerID/:playerCode', async (req, res)=>{
@@ -43,6 +43,6 @@ router.get('/player/:playerID/:playerCode', async (req, res)=>{
     '/profil/spieler/'+
     req.params.playerCode,
   );
-  res.send(response.items[0]);
+  res.json(response.items[0]);
 });
 module.exports = router;

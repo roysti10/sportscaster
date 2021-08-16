@@ -22,7 +22,7 @@ router.get('/:season/all', async (req, res) => {
     req.params.season,
   );
 
-  res.send({'teams': response.items[0].teams});
+  res.json({'teams': response.items[0].teams});
 });
 
 router.get('/:season/:teamId/:teamCode', async (req, res) => {
@@ -45,7 +45,7 @@ router.get('/:season/:teamId/:teamCode', async (req, res) => {
   }
   if (flag == 0) {
     res.status(500);
-    res.send('Team not in league');
+    res.json('Team not in league');
   } else {
     const teamResponse = await getJson(
         process.env.API_URL +
@@ -65,7 +65,7 @@ router.get('/:season/:teamId/:teamCode', async (req, res) => {
     );
     teamResponse.items[0].transfers =
       transferResponse.items[0].transfers[req.params.teamId];
-    res.send(teamResponse.items[0]);
+    res.json(teamResponse.items[0]);
   }
 });
 

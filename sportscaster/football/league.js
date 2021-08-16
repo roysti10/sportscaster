@@ -5,7 +5,7 @@ const team = require('./team');
 
 router.get('/', (req, res) => {
   res.status(400);
-  res.send('Bad Request!');
+  res.json('Bad Request!');
 });
 
 const leagueMap = {
@@ -29,7 +29,7 @@ router.get('/teams/:season/all', async (req, res) => {
     req.params.season,
   );
 
-  res.send({'teams': response.items[0].teams});
+  res.json({'teams': response.items[0].teams});
 });
 
 router.get('/table/:season', async (req, res) => {
@@ -44,7 +44,7 @@ router.get('/table/:season', async (req, res) => {
     req.params.season,
   );
 
-  res.send({
+  res.json({
     'league_leaders': response.items[0].league_leaders,
     'league_table': response.items[0].league_table,
   });
@@ -62,7 +62,7 @@ router.get('/match-schedule/:season', async (req, res) => {
     req.params.season,
   );
 
-  res.send(response.items[0].schedule);
+  res.json(response.items[0].schedule);
 });
 
 router.get('/transfers/:season', async (req, res) => {
@@ -74,6 +74,6 @@ router.get('/transfers/:season', async (req, res) => {
         '/transfers/wettbewerb/' +
         leagueMap[req.baseUrl.split('/football/')[1]],
   );
-  res.send(response.items[0].transfers);
+  res.json(response.items[0].transfers);
 });
 module.exports = router;

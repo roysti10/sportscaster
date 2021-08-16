@@ -6,7 +6,15 @@
 <p align="center" style="font-size:20px">
   A one-stop API solution for all your sporting data
   <br>
-  <a href = "url">Report a bug</a> | <a href="url">Request a feature</a>
+  <a 
+    href = "https://github.com/lucasace/sportscaster/issues/new?assignees=&labels=&template=bug_report.md&title=%5BBUG%5D">
+    Report a bug
+  </a> 
+  | 
+  <a 
+    href="https://github.com/lucasace/sportscaster/issues/new?assignees=&labels=&template=feature_request.md&title=%5BFEATURE%5D">
+    Request a feature
+  </a>
 </p>
 
 ## About the Project
@@ -27,17 +35,39 @@ A list of sites I scraped for this API are listed in acknowledgements
 
 The API is very simple to use , all you have to do is know what you want to search for!
 
-A sample is given below
+A sample is given below, we extract the live football matches of the day
 
 ```bash
-curl bla bla bla
+curl https://sportscaster.herokuapp.com/football/live-matches
 ```
 
-returns the following output
+returns the output in the following
 
 ```
-allalala
+[
+  {
+    "match_type": "matchday 3",
+    "match_code": "3594182",
+    "teams": [
+      {
+        "name": "Hallescher FC",
+        "code": "hallescher-fc",
+        "id": "440"
+      },
+      {
+        "name": "E. Braunschweig",
+        "code": "eintracht-braunschweig",
+        "id": "23"
+      }
+    ],
+    "match_status": "6:00 PM"
+  },
+  .
+  . 
+  .
+]
 ```
+and so on
 
 For more requests , kindly visit the docs
 

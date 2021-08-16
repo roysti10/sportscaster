@@ -51,7 +51,7 @@ class MatchSpider(scrapy.Spider):
             ).get(),
             "teams": [
                 {
-                    "nae": team.xpath("a[2]/text()").get(),
+                    "name": team.xpath("a[2]/text()").get(),
                     "id": team.xpath("a[2]").xpath("@href").get().split("/")[1],
                 }
                 for team in response.selector.xpath(

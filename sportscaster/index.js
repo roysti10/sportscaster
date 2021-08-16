@@ -1,5 +1,8 @@
 const app = require('express')();
 const football = require('./football');
+const cors = require('cors');
+
+app.use(cors());
 
 app.get('/', (req, res)=>{
   res.status(400);

@@ -69,7 +69,11 @@ returns the output in the following
 ```
 and so on
 
-For more requests , kindly visit the docs
+For more requests , kindly visit the [docs](https://lucasace.github.io/sportscaster/)
+
+## Local Development
+Visit [Documentation](https://lucasace.github.io/sportscaster/#section/Local-Development)
+for Local-Development
 
 ## Currently Supported Sports
 

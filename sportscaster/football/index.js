@@ -9,12 +9,7 @@ router.get(['/', '/match-info'], (req, res) =>{
   res.send('Bad Request!');
 });
 
-router.use(['/premier-league',
-  '/laliga',
-  '/1-bundesliga',
-  '/ligue-1',
-  '/serie-a',
-], league);
+router.use('/:league', league);
 
 router.get('/live-matches', async (req, res)=>{
   const response = await getJson(

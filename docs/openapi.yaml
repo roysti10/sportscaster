@@ -1,0 +1,585 @@
+openapi: 3.0.0
+servers:
+  - url: //sportscaster.herokuapp.com
+    description: API Server
+info:
+  description: |
+    <p align="center">
+     <img 
+     src="https://user-images.githubusercontent.com/54945757/129482776-0da89503-e519-4d48-9543-9c0bf271e7bd.png" 
+     alt="logo" width="200" height="400" />
+    </p>
+
+    # Introduction
+    Sportscaster is a reliable sports API which scrapes data from the most reliable sources 
+    in the internet and organizes them in a neat and easy to use JSON format.
+
+    Reasons why I built this
+    * There aren't a lot of free sports APIs on the internet
+    * Scraping data is ridiculously boring and tiresome (Let me do that task for you)
+
+    # Getting Started
+    The API is very simple to use , all you have to do is know what you want to search for!
+    A sample is given below, we extract the live football matches of the day
+    
+    ```bash
+    curl https://sportscaster.herokuapp.com/football/live-matches
+    ```
+
+    returns the output as shown below
+
+    ```
+    [
+      {
+        "match_type": "matchday 3",
+        "match_code": "3594182",
+        "teams": [
+          {
+            "name": "Hallescher FC",
+            "code": "hallescher-fc",
+            "id": "440"
+          },
+          {
+            "name": "E. Braunschweig",
+            "code": "eintracht-braunschweig",
+            "id": "23"
+          }
+        ],
+        "match_status": "6:00 PM"
+      },
+      .
+      . 
+      .
+    ]
+    ```
+    and so on
+ 
+
+    # Local Development
+    1. Making changes to the API only
+      * `npm start` - runs the api from node
+      * `npm run dev` - runs the api from nodemon (preferred)
+    2. Making changes to the Crawler and the API.
+      * Open two terminal windows 
+      * In one run `scrapyrt`
+      * In the second one run `npm run dev-crawl`
+
+  version: 0.1.0
+  title: Sportscaster
+  contact:
+    name: lucasace
+    url: https://github.com/lucasace/sportscaster
+  x-logo:
+    url: 'https://user-images.githubusercontent.com/54945757/129666178-8d173529-2449-4d17-9b07-9a8df8f49585.png'
+    altText: Sportscaster
+  license:
+    name: Eclipse Public License 2.0
+    url: 'https://github.com/lucasace/sportscaster/blob/main/LICENSE'
+
+tags:
+  - name: football
+    description: All the data from the world of football
+x-tagGroups:
+  - name: API
+    tags:
+      - football
+paths:
+  /football/live-matches:
+    get:
+      tags:
+      - football
+      summary: "Gets you the live games of the day based on GMT"
+      operationId: "live-matches"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    match_type:
+                      type: "string"
+                    match_code:
+                      type: "string"
+                    teams:
+                      type: "array"
+                      items:
+                        type: "object"
+                        properties:
+                          name: 
+                            type: "string"
+                          code:
+                            type: "string"
+                          id:
+                            type: "string"
+                    match_status:
+                      type: "string"
+  /football/match-info/{match_code}:
+    get:
+      tags:
+        - football
+      summary: "Gives detailed information of the match corresponding to the match code"
+      description: "Note: `match_events` , `lineups`, 'formation', 'substitutes' dont get displayed for all matches. Will work on this soon"
+      operationId: "match-info"
+      parameters:
+        - name: match_code
+          in: path
+          description: match code - can be got from `/football/live-matches` or `/football/{league}/schedule/{season}`
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "successful response"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  match_schedule: 
+                    type: "string"
+                  league:
+                    type: "object"
+                    properties:
+                      name: 
+                        type: "string"
+                      id:
+                        type: "string"
+                  stadium:
+                    type: "string"
+                  teams:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        name:
+                          type: "string"
+                        id:
+                          type: "string"
+                        formation:
+                          type: "string"
+                        lineups:
+                          type: "array"
+                          items:
+                            type: "object"
+                            properties:
+                              name: 
+                                type: "string"
+                              player_code:
+                                type: "string"
+                              player_id:
+                                type: "string"
+                              position:
+                                type: "string"
+                        substitutes:
+                          type: "array"
+                          items:
+                            type: "object"
+                            properties:
+                              name: 
+                                type: "string"
+                              player_code:
+                                type: "string"
+                              player_id:
+                                type: "string"
+                              position:
+                                type: "string"
+                  score:
+                    type: "string"
+                  match_events:
+                    type: "object"
+                    properties:
+                      Substitutions:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            out:
+                              type: "string"
+                            in:
+                              type: "string"
+                      Goals:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            score: 
+                              type: "string"
+                            player:
+                              type: "string"
+                      Cards:
+                        type: "array"
+                        items: 
+                          type: "object"
+                          properties:
+                            player:
+                              type: "string"
+                            card-info:
+                              type: "string"
+  /football/{league}/table/{season}:
+    get:
+      tags:
+        - football
+      summary: Gets the league table for the league specified in the season specified
+      description: Note:- currently the following leagues are supported
+        
+        1. premier-league
+        
+        2. laliga
+        
+        3. serie-a
+        
+        4.  1-bundesliga
+        
+        5.  ligue-1
+
+       
+        No championships like UCL are supported yet
+        Rest of the leagues are coming soon
+      operationId: {league}
+      parameters:
+        - name: league
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: season
+          in: path
+          description: the current season year i.e 21/22 season is to be written as `2021` - the start year
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "successful response"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  league_leaders:
+                    type: "string"
+                  league_table:
+                    type: "object"
+                    properties:
+                      X.:
+                        type: "object"
+                        properties:
+                          team:
+                            type: "object"
+                            properties:
+                              name:
+                                type: "string"
+                              id:
+                                type: "string"
+                              code:
+                                type: "string"
+                          Matches:
+                            type: "string"
+                          Wins:
+                            type: "string"
+                          Draws:
+                            type: "string"
+                          Losses:
+                            type: "string"
+                          Goals Scores/Conceded:
+                            type: "string"
+                          Points:
+                            type: "string"
+  /football/{league}/match-schedule/{season}:
+    get:
+      tags:
+        - football
+      summary: Gets the league schedule for the league specified in the season specified
+      description: Note:- currently the following leagues are supported
+        
+        1. premier-league
+        
+        2. laliga
+        
+        3. serie-a
+        
+        4.  1-bundesliga
+        
+        5.  ligue-1
+
+       
+        No championships like UCL are supported yet
+        Rest of the leagues are coming soon
+      operationId: {league}
+      parameters:
+        - name: league
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: season
+          in: path
+          description: the current season year i.e 21/22 season is to be written as `2021` - the start year
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "successful response"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  x. Matchday:
+                    type: "object"
+                    properties:
+                      Date:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            team1:
+                              type: "string"
+                            team2:
+                              type: "string"
+                            score:
+                              type: "string"
+                            match_code:
+                              type: "string"
+  /football/{league}/transfers/{season}:
+    get:
+      tags:
+        - football
+      summary: Gets the league transfers for the league specified in the season specified
+      description: Note:- currently the following leagues are supported
+        
+        1. premier-league
+        
+        2. laliga
+        
+        3. serie-a
+        
+        4.  1-bundesliga
+        
+        5.  ligue-1
+
+       
+        No championships like UCL are supported yet
+        Rest of the leagues are coming soon
+      operationId: {league}
+      parameters:
+        - name: league
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: season
+          in: path
+          description: the current season year i.e 21/22 season is to be written as `2021` - the start year
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "successful response"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  club-code:
+                    type: "object"
+                    properties:
+                      In:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            name:
+                              type: "string"
+                            Position:
+                              type: "string"
+                            From:
+                              type: "string"
+                            Fee:
+                              type: "string"
+                      Out:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            name:
+                              type: "string"
+                            Position:
+                              type: "string"
+                            To:
+                              type: "string"
+                            Fee:
+                              type: "string"
+  /football/{league}/teams/{season}/all:
+    get:
+      tags:
+        - football
+      summary: Gets all the teams for the league specified in the season specified
+      description: Note:- currently the following leagues are supported
+        
+        1. premier-league
+        
+        2. laliga
+        
+        3. serie-a
+        
+        4.  1-bundesliga
+        
+        5.  ligue-1
+
+       
+        No championships like UCL are supported yet
+        Rest of the leagues are coming soon
+      operationId: {league}
+      parameters:
+        - name: league
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: season
+          in: path
+          description: the current season year i.e 21/22 season is to be written as `2021` - the start year
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "successful response"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  teams:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        name:
+                          type: "string"
+                        id:
+                          type: "string"
+                        code:
+                          type: "string"
+  /football/{league}/table/{season}/{teamId}/{teamCode}:
+    get:
+      tags:
+        - football
+      summary: Gets the team info for the team specified in the league specified in the season specified
+      description: Note:- currently the following leagues are supported
+        
+        1. premier-league
+        
+        2. laliga
+        
+        3. serie-a
+        
+        4.  1-bundesliga
+        
+        5.  ligue-1
+
+       
+        No championships like UCL are supported yet
+        Rest of the leagues are coming soon
+      operationId: {league}
+      parameters:
+        - name: league
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: season
+          in: path
+          description: the current season year i.e 21/22 season is to be written as `2021` - the start year
+          required: true
+          schema:
+            type: "string"
+        - name: teamId
+          in: path
+          description: the id , taken from `/football/{league}/teams/{season}/all`
+          required: true
+          schema:
+            type: "string"
+        - name: teamCode
+          in: path
+          description: the code, taken from `/football/{league}/teams/{season}/all`
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "successful response"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  name:
+                    type: "string"
+                  titles:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        Title:
+                          type: "string"
+                        years:
+                          type: "array"
+                          items:
+                            type: "string"
+                  players:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        name:
+                          type: "string"
+                        player_ids:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "string"
+                            code:
+                              type: "string"
+                        injury_status:
+                          type: "string"
+                        squad_number:
+                          type: "string"
+                        position:
+                          type: "string"
+                  transfers:
+                    type: "object"
+                    properties:
+                      In:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            name:
+                              type: "string"
+                            Position:
+                              type: "string"
+                            From:
+                              type: "string"
+                            Fee:
+                              type: "string"
+                      Out:
+                        type: "array"
+                        items:
+                          type: "object"
+                          properties:
+                            name:
+                              type: "string"
+                            Position:
+                              type: "string"
+                            To:
+                              type: "string"
+                            Fee:
+                              type: "string"
+

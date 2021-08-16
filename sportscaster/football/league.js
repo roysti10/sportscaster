@@ -17,20 +17,6 @@ const leagueMap = {
 };
 
 router.use('/teams', team);
-router.get('/teams/:season/all', async (req, res) => {
-  const response = await getJson(
-      process.env.API_URL +
-    'crawl.json?spider_name=football-league-info&' +
-    'url=https://www.transfermarkt.co.uk/' +
-    req.baseUrl.split('/football/')[1] +
-    '/startseite/wettbewerb/' +
-    leagueMap[req.baseUrl.split('/football/')[1]] +
-    '/plus/?saison_id=' +
-    req.params.season,
-  );
-
-  res.json({'teams': response.items[0].teams});
-});
 
 router.get('/table/:season', async (req, res) => {
   const response = await getJson(
